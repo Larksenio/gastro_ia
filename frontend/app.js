@@ -241,7 +241,7 @@ btnAnalizar.addEventListener('click', async () => {
 
   try {
     // Enviamos la imagen al backend en formato JSON
-    const respuesta = await fetch(BACKEND_URL, {
+    const respuesta = await fetch( 'https://gastro-ia.onrender.com', {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
