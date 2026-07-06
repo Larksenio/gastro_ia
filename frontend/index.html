@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <!--
+    viewport: hace que la página se adapte al tamaño de la pantalla del celular.
+    user-scalable=no: evita el zoom accidental al tocar la pantalla.
+  -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#00ff9f" />
+  <meta name="description" content="Fotografía tu plato y obtén un análisis nutricional con inteligencia artificial" />
+
+  <!-- Soporte PWA en iOS (Safari no usa el manifest para algunos ajustes) -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="GastroIA" />
+
+  <title>GastroIA — Analizador Nutricional</title>
+
+  <!-- Vinculamos el manifest (necesario para que sea PWA) -->
+  <link rel="manifest" href="manifest.json" />
+
+  <!-- Nuestro CSS -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="app-container">
+
+    <!-- ── ENCABEZADO ─────────────────────────────────────────── -->
+    <header>
+      <h1>⬡ GastroIA</h1>
+      <p class="subtitulo">ANALIZADOR NUTRICIONAL · IA</p>
+    </header>
+
+    <!-- ── SECCIÓN DE CÁMARA ──────────────────────────────────── -->
+    <section class="camara-seccion">
+
+      <!-- Vista previa: aquí se muestra la foto tomada -->
+      <div class="preview-wrapper" id="previewWrapper">
+        <img id="preview" alt="Vista previa del plato" />
+
+        <!-- Placeholder cuando no hay foto -->
+        <div class="preview-placeholder" id="placeholder">
+          <span class="icono">📷</span>
+          <span>Toca "Abrir cámara"<br>para tomar una foto</span>
+        </div>
+      </div>
+
+      <!--
+        Canvas oculto: lo usamos en JavaScript para capturar
+        el fotograma de la cámara como imagen.
+      -->
+      <canvas id="canvas"></canvas>
+
+      <!--
+        Input file oculto: se usa como FALLBACK en caso de que
+        getUserMedia (la cámara directa) no funcione.
+      -->
+      <input
+        type="file"
+        id="inputArchivo"
+        accept="image/*"
+        capture="environment"
+      />
+
+      <!-- Grupo de botones de acción -->
+      <div class="botones-grupo">
+        <!-- Botón para abrir la cámara (usa getUserMedia) -->
+        <button class="btn btn-primario" id="btnCamara">
+          📷 Abrir cámara
+        </button>
+
+        <!-- Botón para seleccionar una foto de la galería (fallback) -->
+        <button class="btn btn-secundario" id="btnGaleria">
+          🖼 Galería
+        </button>
+
+        <!-- Botón para capturar la foto (visible solo cuando la cámara está activa) -->
+        <button class="btn btn-primario" id="btnCapturar" style="display:none; grid-column: 1 / -1;">
+          ⊙ Capturar foto
+        </button>
+
+        <!-- Botón principal: envía la foto al backend para analizarla -->
+        <button class="btn btn-analizar" id="btnAnalizar" disabled>
+          ⬡ Analizar plato
+        </button>
+      </div>
+
+    </section>
+
+    <!-- ── LOADER (spinner mientras espera la respuesta) ─────── -->
+    <div id="loader">
+      <div class="spinner"></div>
+      <span class="loader-texto">ANALIZANDO IMAGEN...</span>
+    </div>
+
+    <!-- ── PANEL DE ERRORES ───────────────────────────────────── -->
+    <div id="error-panel" role="alert"></div>
+
+    <!-- ── PANEL DE RESULTADOS ───────────────────────────────── -->
+    <section id="resultados" aria-live="polite">
+
+      <!-- Tarjeta: nombre del plato -->
+      <div class="tarjeta">
+        <span class="tarjeta-label">Plato identificado</span>
+        <p class="plato-nombre" id="res-plato">—</p>
+      </div>
+
+      <!-- Tarjeta: ingredientes -->
+      <div class="tarjeta">
+        <span class="tarjeta-label">Ingredientes probables</span>
+        <ul class="ingredientes-lista" id="res-ingredientes"></ul>
+      </div>
+
+      <!-- Tarjeta: porción estimada -->
+      <div class="tarjeta">
+        <span class="tarjeta-label">Porción estimada</span>
+        <p class="porciones-valor" id="res-porciones">—</p>
+      </div>
+
+      <!-- Tarjeta: tabla nutricional -->
+      <div class="tarjeta">
+        <span class="tarjeta-label">Valores nutricionales aprox.</span>
+        <table class="tabla-nutricion">
+          <tbody>
+            <tr class="fila-calorias">
+              <td class="nutriente-nombre">Calorías</td>
+              <td class="nutriente-valor" id="res-calorias">—</td>
+            </tr>
+            <tr>
+              <td class="nutriente-nombre">Proteínas</td>
+              <td class="nutriente-valor" id="res-proteinas">—</td>
+            </tr>
+            <tr>
+              <td class="nutriente-nombre">Grasas</td>
+              <td class="nutriente-valor" id="res-grasas">—</td>
+            </tr>
+            <tr>
+              <td class="nutriente-nombre">Carbohidratos</td>
+              <td class="nutriente-valor" id="res-carbohidratos">—</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </section>
+
+    <!-- ── FOOTER ─────────────────────────────────────────────── -->
+    <footer>
+      <p>GASTRO_IA · SISTEMA DE ANÁLISIS NUTRICIONAL</p>
+    </footer>
+
+  </div><!-- /app-container -->
+
+  <!-- Nuestro JavaScript (defer = carga después del HTML) -->
+  <script src="app.js" defer></script>
+
+</body>
+</html>

@@ -1,0 +1,407 @@
+/* ──────────────────────────────────────────────────────────────
+   style.css — Estilos de GastroIA
+   Tema: HUD futurista (fondo oscuro, texto verde/cian)
+   Diseño mobile-first: primero pensado para celular.
+────────────────────────────────────────────────────────────── */
+
+/* ── VARIABLES DE COLOR ──────────────────────────────────────── */
+:root {
+  --verde:       #00ff9f;   /* verde neón principal */
+  --cian:        #00e5ff;   /* cian para acentos */
+  --amarillo:    #ffd600;   /* advertencias */
+  --rojo:        #ff1744;   /* errores */
+  --fondo:       #0a0a0f;   /* fondo muy oscuro (casi negro) */
+  --fondo-panel: #0d1117;   /* fondo de los paneles/tarjetas */
+  --borde:       #1a2a1a;   /* color del borde de los paneles */
+  --texto-dim:   #4a7a5a;   /* texto secundario apagado */
+  --fuente: 'Courier New', Courier, monospace; /* fuente monoespacio */
+}
+
+/* ── RESET Y BASE ────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  font-family: var(--fuente);
+  background-color: var(--fondo);
+  color: var(--verde);
+  overflow-x: hidden;
+}
+
+/* Efecto de "ruido de pantalla" en el fondo */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 255, 159, 0.015) 2px,
+      rgba(0, 255, 159, 0.015) 4px
+    );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── CONTENEDOR PRINCIPAL ────────────────────────────────────── */
+.app-container {
+  position: relative;
+  z-index: 1;
+  max-width: 480px;      /* ancho máximo en pantallas grandes */
+  margin: 0 auto;
+  padding: 1rem;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+/* ── ENCABEZADO ──────────────────────────────────────────────── */
+header {
+  text-align: center;
+  padding: 1rem 0 0.5rem;
+  border-bottom: 1px solid var(--borde);
+}
+
+header h1 {
+  font-size: 1.8rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--verde);
+  text-shadow: 0 0 12px rgba(0, 255, 159, 0.6);
+}
+
+header .subtitulo {
+  font-size: 0.7rem;
+  color: var(--texto-dim);
+  letter-spacing: 0.2em;
+  margin-top: 0.3rem;
+}
+
+/* ── SECCIÓN DE CÁMARA ───────────────────────────────────────── */
+.camara-seccion {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+/* Área donde se muestra la vista previa de la foto */
+.preview-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4/3;
+  background: var(--fondo-panel);
+  border: 1px solid var(--borde);
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Esquinas decorativas estilo HUD */
+.preview-wrapper::before,
+.preview-wrapper::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-color: var(--cian);
+  border-style: solid;
+  z-index: 2;
+}
+.preview-wrapper::before {
+  top: 8px; left: 8px;
+  border-width: 2px 0 0 2px;
+}
+.preview-wrapper::after {
+  bottom: 8px; right: 8px;
+  border-width: 0 2px 2px 0;
+}
+
+/* Imagen de vista previa (la foto tomada o el stream de cámara) */
+#preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: none; /* se muestra solo cuando hay foto */
+}
+
+/* Texto placeholder cuando no hay foto */
+.preview-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--texto-dim);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-align: center;
+}
+
+.preview-placeholder .icono {
+  font-size: 3rem;
+  opacity: 0.4;
+}
+
+/* Canvas oculto — lo usamos para capturar el fotograma de la cámara */
+#canvas { display: none; }
+
+/* Input de archivo oculto — fallback para dispositivos sin getUserMedia */
+#inputArchivo { display: none; }
+
+/* ── BOTONES ─────────────────────────────────────────────────── */
+.botones-grupo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+}
+
+.btn {
+  font-family: var(--fuente);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.75rem 0.5rem;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: 1px solid currentColor;
+  background: transparent;
+}
+
+/* Botón primario (verde) */
+.btn-primario {
+  color: var(--verde);
+  border-color: var(--verde);
+  box-shadow: 0 0 8px rgba(0, 255, 159, 0.2);
+}
+.btn-primario:hover:not(:disabled) {
+  background: rgba(0, 255, 159, 0.1);
+  box-shadow: 0 0 14px rgba(0, 255, 159, 0.4);
+}
+
+/* Botón secundario (cian) */
+.btn-secundario {
+  color: var(--cian);
+  border-color: var(--cian);
+  box-shadow: 0 0 8px rgba(0, 229, 255, 0.15);
+}
+.btn-secundario:hover:not(:disabled) {
+  background: rgba(0, 229, 255, 0.08);
+  box-shadow: 0 0 14px rgba(0, 229, 255, 0.35);
+}
+
+/* Estado deshabilitado */
+.btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* Botón de analizar ocupa toda la fila */
+.btn-analizar {
+  grid-column: 1 / -1;
+  font-size: 0.85rem;
+  padding: 0.9rem;
+  color: var(--fondo);
+  background: var(--verde);
+  border-color: var(--verde);
+  font-weight: bold;
+  box-shadow: 0 0 20px rgba(0, 255, 159, 0.4);
+}
+.btn-analizar:hover:not(:disabled) {
+  background: #00ffb3;
+  box-shadow: 0 0 30px rgba(0, 255, 159, 0.6);
+}
+.btn-analizar:disabled {
+  background: transparent;
+  color: var(--texto-dim);
+  border-color: var(--texto-dim);
+  box-shadow: none;
+  opacity: 1;
+}
+
+/* ── LOADER / SPINNER ────────────────────────────────────────── */
+#loader {
+  display: none; /* oculto por defecto */
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  border: 1px solid var(--borde);
+  background: var(--fondo-panel);
+}
+
+#loader.visible {
+  display: flex;
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 3px solid var(--borde);
+  border-top-color: var(--verde);
+  border-radius: 50%;
+  animation: girar 0.8s linear infinite;
+}
+
+@keyframes girar {
+  to { transform: rotate(360deg); }
+}
+
+.loader-texto {
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  color: var(--texto-dim);
+  animation: parpadeo 1.2s step-end infinite;
+}
+
+@keyframes parpadeo {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
+/* ── PANEL DE RESULTADOS ─────────────────────────────────────── */
+#resultados {
+  display: none; /* oculto hasta que lleguen datos */
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+#resultados.visible {
+  display: flex;
+}
+
+/* Tarjeta genérica de dato */
+.tarjeta {
+  border: 1px solid var(--borde);
+  background: var(--fondo-panel);
+  padding: 0.9rem 1rem;
+  position: relative;
+}
+
+/* Etiqueta en la esquina superior de la tarjeta */
+.tarjeta-label {
+  position: absolute;
+  top: -0.55rem;
+  left: 0.8rem;
+  background: var(--fondo-panel);
+  padding: 0 0.4rem;
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  color: var(--cian);
+  text-transform: uppercase;
+}
+
+/* Nombre del plato */
+.plato-nombre {
+  font-size: 1.3rem;
+  color: var(--verde);
+  text-shadow: 0 0 8px rgba(0, 255, 159, 0.4);
+  letter-spacing: 0.05em;
+  margin-top: 0.2rem;
+}
+
+/* Lista de ingredientes */
+.ingredientes-lista {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.3rem;
+}
+
+.ingredientes-lista li {
+  font-size: 0.7rem;
+  padding: 0.25rem 0.55rem;
+  border: 1px solid var(--texto-dim);
+  color: var(--texto-dim);
+  letter-spacing: 0.05em;
+}
+
+/* Estimación de porción */
+.porciones-valor {
+  font-size: 1rem;
+  color: var(--cian);
+  margin-top: 0.2rem;
+}
+
+/* Tabla de valores nutricionales */
+.tabla-nutricion {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.4rem;
+  font-size: 0.75rem;
+}
+
+.tabla-nutricion tr {
+  border-bottom: 1px solid var(--borde);
+}
+
+.tabla-nutricion tr:last-child {
+  border-bottom: none;
+}
+
+.tabla-nutricion td {
+  padding: 0.45rem 0.2rem;
+}
+
+/* Celda izquierda: nombre del nutriente */
+.tabla-nutricion .nutriente-nombre {
+  color: var(--texto-dim);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.65rem;
+}
+
+/* Celda derecha: valor */
+.tabla-nutricion .nutriente-valor {
+  text-align: right;
+  color: var(--verde);
+  font-size: 0.85rem;
+}
+
+/* Valor de calorías más grande */
+.tabla-nutricion .fila-calorias .nutriente-valor {
+  color: var(--amarillo);
+  font-size: 1rem;
+  text-shadow: 0 0 6px rgba(255, 214, 0, 0.4);
+}
+
+/* ── PANEL DE ERRORES ────────────────────────────────────────── */
+#error-panel {
+  display: none;
+  border: 1px solid var(--rojo);
+  background: rgba(255, 23, 68, 0.05);
+  padding: 1rem;
+  color: var(--rojo);
+  font-size: 0.8rem;
+  line-height: 1.5;
+  letter-spacing: 0.05em;
+}
+
+#error-panel.visible {
+  display: block;
+}
+
+/* ── FOOTER ──────────────────────────────────────────────────── */
+footer {
+  text-align: center;
+  font-size: 0.6rem;
+  color: var(--texto-dim);
+  letter-spacing: 0.15em;
+  padding-bottom: 1rem;
+  margin-top: auto;
+}
+
+/* ── RESPONSIVE: pantallas grandes (tablet/desktop) ──────────── */
+@media (min-width: 600px) {
+  header h1 { font-size: 2.2rem; }
+  .btn      { font-size: 0.8rem; }
+}
