@@ -186,19 +186,17 @@ btnCapturar.addEventListener('click', () => {
 /**
  * Abre el selector de archivos para elegir una foto de la galería.
  */
+const inputGaleria = document.getElementById('inputGaleria');
+
 btnGaleria.addEventListener('click', () => {
   ocultarError();
-  inputArchivo.click();
+  inputGaleria.click();
 });
 
-/**
- * Procesa el archivo de imagen cuando el usuario lo selecciona.
- */
-inputArchivo.addEventListener('change', (e) => {
+inputGaleria.addEventListener('change', (e) => {
   const archivo = e.target.files[0];
   if (!archivo) return;
 
-  // Verificamos que sea una imagen
   if (!archivo.type.startsWith('image/')) {
     mostrarError('Por favor selecciona un archivo de imagen (JPG, PNG, WEBP).');
     return;
@@ -206,22 +204,18 @@ inputArchivo.addEventListener('change', (e) => {
 
   tipoImagen = archivo.type;
 
-  // Leemos el archivo como base64 con FileReader
   const reader = new FileReader();
   reader.onload = (evento) => {
     const dataURL = evento.target.result;
-    imagenBase64  = dataURL.split(',')[1]; // quitamos el prefijo
+    imagenBase64  = dataURL.split(',')[1];
 
     mostrarPreview(dataURL);
     btnAnalizar.disabled = false;
   };
   reader.readAsDataURL(archivo);
 
-  // Limpiamos el input para que el evento change se dispare
-  // incluso si el usuario selecciona el mismo archivo dos veces
   e.target.value = '';
 });
-
 // ── 4. ANALIZAR PLATO (llamada al backend) ────────────────────
 /**
  * Envía la imagen al backend y muestra los resultados.
