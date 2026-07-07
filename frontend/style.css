@@ -13,7 +13,7 @@
   --fondo:       #0a0a0f;   /* fondo muy oscuro (casi negro) */
   --fondo-panel: #0d1117;   /* fondo de los paneles/tarjetas */
   --borde:       #1a2a1a;   /* color del borde de los paneles */
-  --texto-dim:   #4a7a5a;   /* texto secundario apagado */
+  --texto-dim:   #f8faf8;   /* texto secundario apagado */
   --fuente: 'Courier New', Courier, monospace; /* fuente monoespacio */
 }
 
