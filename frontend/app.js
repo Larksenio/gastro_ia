@@ -340,38 +340,5 @@ if ('serviceWorker' in navigator) {
       .then(() => console.log('Service Worker registrado correctamente.'))
       .catch(err => console.warn('Service Worker no pudo registrarse:', err));
   });
-  // ── 7. BOTÓN NUEVO: CÁMARA DIRECTA PARA META QUEST ────────────
-// Aislado del flujo de "Galería" y de "Abrir cámara" para no
-// interferir con lo que ya funciona.
-const inputCamaraQuest = document.getElementById('inputCamaraQuest');
-const btnCamaraQuest   = document.getElementById('btnCamaraQuest');
-
-btnCamaraQuest.addEventListener('click', () => {
-  ocultarError();
-  inputCamaraQuest.click();
-});
-
-inputCamaraQuest.addEventListener('change', (e) => {
-  const archivo = e.target.files[0];
-  if (!archivo) return;
-
-  if (!archivo.type.startsWith('image/')) {
-    mostrarError('Por favor selecciona un archivo de imagen (JPG, PNG, WEBP).');
-    return;
-  }
-
-  tipoImagen = archivo.type;
-
-  const reader = new FileReader();
-  reader.onload = (evento) => {
-    const dataURL = evento.target.result;
-    imagenBase64  = dataURL.split(',')[1];
-
-    mostrarPreview(dataURL);
-    btnAnalizar.disabled = false;
-  };
-  reader.readAsDataURL(archivo);
-
-  e.target.value = '';
-});
+  
 }
