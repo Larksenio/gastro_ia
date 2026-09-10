@@ -39,21 +39,10 @@ realmente en la foto.
 
 MENÚ DEL EVENTO:
 
-1. "Ensalada de frutas": mezcla de frutas frescas picadas (ej: manzana,
-   papaya, banano, uvas, melón, sandía, según lo que se vea en la foto),
-   servida en copa o bowl, colores variados y vivos.
 
-2. "Lasaña": capas de pasta, salsa (boloñesa o blanca), queso gratinado por
-   encima. Presentación en porción rectangular/cuadrada, colores rojo
-   (salsa de tomate) o blanco (salsa bechamel) con queso dorado arriba.
+1. "Sushi": california rolls, eby crab crunch, con ensalada de zanahoria, aguacate, lechuga, pepinillo, aguacate, con salsa de soya.
 
-3. "Papipollo": plato típico ecuatoriano de papas con pollo — papas
-   (fritas, cocidas o en puré) acompañadas de pollo (apanado, asado o
-   guisado), normalmente con alguna salsa o aderezo.
-
-4. "Panes de yuca": panecillos pequeños hechos a base de almidón de yuca y
-   queso, de forma redonda, color dorado, textura elástica/chiclosa por
-   dentro y ligeramente crocante por fuera.
+2. "Hamburguesa con papas fritas": hamburguesa de carne de res con pan, lechuga morada, salsa de queso.
 
 Si la imagen NO coincide con ningún plato de este menú específico, analízala
 como un plato de comida ecuatoriana o latinoamericana en general (por ejemplo:
